@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ankur.studentcoursemanagement.entity.Student;
+import com.ankur.studentcoursemanagement.dto.StudentRequestDTO;
+import com.ankur.studentcoursemanagement.dto.StudentResponseDTO;
+import com.ankur.studentcoursemanagement.mapper.StudentMapper;
 import com.ankur.studentcoursemanagement.service.StudentService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/students")
@@ -28,29 +32,29 @@ public class StudentController
 	}
 	
 	@PostMapping
-	public ResponseEntity<Student> saveStudent(@RequestBody Student student)
+	public ResponseEntity<StudentResponseDTO> saveStudent(@Valid @RequestBody StudentRequestDTO requestDTO)
 	{
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.body(studentService.saveStudent(student));
+				.body(StudentMapper.toResponseDTO(studentService.saveStudent(StudentMapper.toEntity(requestDTO))));
 	}
 	
 	@GetMapping
-	public List<Student> getAllStudents()
+	public ResponseEntity<List<StudentResponseDTO>> getAllStudents()
 	{
-		return studentService.getAllStudents();
+		return ResponseEntity.ok(StudentMapper.toResponseDTOList(studentService.getAllStudents()));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Student> getStudentById(@PathVariable Integer id)
+	public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable Integer id)
 	{
-		return ResponseEntity.ok(studentService.getStudentById(id));
+		return ResponseEntity.ok(StudentMapper.toResponseDTO(studentService.getStudentById(id)));
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Student> updateStudent(@PathVariable Integer id, @RequestBody Student updatedStudent)
+	public ResponseEntity<StudentResponseDTO> updateStudent(@PathVariable Integer id, @Valid @RequestBody StudentRequestDTO updatedStudentRequestDTO)
 	{
-		return ResponseEntity.ok(studentService.updateStudent(id, updatedStudent));
+		return ResponseEntity.ok(StudentMapper.toResponseDTO(studentService.updateStudent(id, StudentMapper.toEntity(updatedStudentRequestDTO))));
 	}
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteStudent(@PathVariable Integer id)
