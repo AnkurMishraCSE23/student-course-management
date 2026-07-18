@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ankur.studentcoursemanagement.entity.Student;
+import com.ankur.studentcoursemanagement.exception.DuplicateEmailException;
 import com.ankur.studentcoursemanagement.exception.StudentNotFoundException;
 import com.ankur.studentcoursemanagement.repository.StudentRepository;
 import com.ankur.studentcoursemanagement.service.StudentService;
@@ -22,6 +23,13 @@ public class StudentServiceImpl implements StudentService
 	@Override
 	public Student saveStudent(Student student)
 	{
+//		return studentRepository.save(student);
+		
+		if(studentRepository.existsByEmail(student.getEmail()))
+		{
+			throw new DuplicateEmailException("Student with email: " + student.getEmail() + " already exists!");
+		}
+		
 		return studentRepository.save(student);
 	}
 	
@@ -43,10 +51,16 @@ public class StudentServiceImpl implements StudentService
 	{
 		Student existingStudent = getStudentById(id);
 		
+		if(!updatedStudent.getEmail().equals(existingStudent.getEmail())
+		   && studentRepository.existsByEmail(updatedStudent.getEmail()))
+		{
+			throw new DuplicateEmailException("Student with email: " + updatedStudent.getEmail() + " already exists!");
+		}
+		
 		existingStudent.setName(updatedStudent.getName());
 		existingStudent.setEmail(updatedStudent.getEmail());
 		
-		return saveStudent(existingStudent);
+		return studentRepository.save(existingStudent);
 	}
 	
 	@Override
@@ -57,5 +71,18 @@ public class StudentServiceImpl implements StudentService
 		Student studentToDelete = getStudentById(id);
 		
 		studentRepository.delete(studentToDelete);
+	}
+	
+	@Override
+	public Student getStudentByEmail(String email)
+	{
+//		Student student = studentRepository.findByEmail(email);
+//		
+//		if(student == null)
+//		{
+//			throw new StudentNotFoundException("Student with email: " + email + "not found!");
+//		}
+		
+		return studentRepository.findByEmail(email).orElseThrow(() -> new StudentNotFoundException("Student with email: " + email + " not found!"));
 	}
 }

@@ -11,4 +11,5 @@ public interface StudentService
 	Student getStudentById(Integer id);
 	Student updateStudent(Integer id, Student updatedStudent);
 	void deleteStudent(Integer id);
+	Student getStudentByEmail(String email);
 }

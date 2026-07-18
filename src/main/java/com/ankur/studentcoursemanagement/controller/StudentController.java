@@ -56,6 +56,7 @@ public class StudentController
 	{
 		return ResponseEntity.ok(StudentMapper.toResponseDTO(studentService.updateStudent(id, StudentMapper.toEntity(updatedStudentRequestDTO))));
 	}
+	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteStudent(@PathVariable Integer id)
 	{
@@ -64,5 +65,12 @@ public class StudentController
 		return ResponseEntity
 				.status(HttpStatus.NO_CONTENT)
 				.build();
+	}
+	
+	@GetMapping("/email/{email}")
+	public ResponseEntity<StudentResponseDTO> getStudentByEmail(@PathVariable String email)
+	{
+		return ResponseEntity
+				.ok(StudentMapper.toResponseDTO(studentService.getStudentByEmail(email)));
 	}
 }
