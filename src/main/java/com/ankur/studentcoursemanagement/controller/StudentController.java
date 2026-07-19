@@ -2,6 +2,8 @@ package com.ankur.studentcoursemanagement.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ankur.studentcoursemanagement.dto.StudentRequestDTO;
 import com.ankur.studentcoursemanagement.dto.StudentResponseDTO;
+import com.ankur.studentcoursemanagement.entity.Student;
 import com.ankur.studentcoursemanagement.mapper.StudentMapper;
 import com.ankur.studentcoursemanagement.service.StudentService;
 
@@ -40,9 +44,16 @@ public class StudentController
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<StudentResponseDTO>> getAllStudents()
+	public ResponseEntity<Page<StudentResponseDTO>> getAllStudents(Pageable pageable)
 	{
-		return ResponseEntity.ok(StudentMapper.toResponseDTOList(studentService.getAllStudents()));
+//		return ResponseEntity.ok(StudentMapper.toResponseDTOList(studentService.getAllStudents()));
+		Page<Student> students = studentService.getAllStudents(pageable);
+//		students.forEach(student -> StudentMapper.toResponseDTO(student)); for each only does some ops on the elements, it does not save anything;
+		
+		Page<StudentResponseDTO> response = students.map(StudentMapper::toResponseDTO);//StudentMapper::..is similar to writing student->foreach...
+		
+		return ResponseEntity
+				.ok(response);
 	}
 	
 	@GetMapping("/{id}")
@@ -72,5 +83,12 @@ public class StudentController
 	{
 		return ResponseEntity
 				.ok(StudentMapper.toResponseDTO(studentService.getStudentByEmail(email)));
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<StudentResponseDTO>> searchStudentsByName(@RequestParam String name)
+	{
+		return ResponseEntity
+				.ok(StudentMapper.toResponseDTOList(studentService.searchStudentsByName(name)));
 	}
 }

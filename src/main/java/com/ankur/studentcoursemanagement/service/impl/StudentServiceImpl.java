@@ -2,6 +2,8 @@ package com.ankur.studentcoursemanagement.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ankur.studentcoursemanagement.entity.Student;
@@ -34,9 +36,9 @@ public class StudentServiceImpl implements StudentService
 	}
 	
 	@Override
-	public List<Student> getAllStudents()
+	public Page<Student> getAllStudents(Pageable pageable)
 	{
-		return studentRepository.findAll();
+		return studentRepository.findAll(pageable);
 	}
 	
 	@Override
@@ -84,5 +86,11 @@ public class StudentServiceImpl implements StudentService
 //		}
 		
 		return studentRepository.findByEmail(email).orElseThrow(() -> new StudentNotFoundException("Student with email: " + email + " not found!"));
+	}
+	
+	@Override
+	public List<Student> searchStudentsByName(String name)
+	{
+		return studentRepository.findByNameContainingIgnoreCase(name);
 	}
 }
