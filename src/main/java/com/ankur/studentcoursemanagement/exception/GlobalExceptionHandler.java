@@ -64,7 +64,7 @@ public class GlobalExceptionHandler
 		ErrorResponse errorResponse = new ErrorResponse();
 		
 		errorResponse.setTimestamp(LocalDateTime.now());
-		errorResponse.setStatus(HttpStatus.CONFLICT.value());//NOT_FOUND itself can be an enum;
+		errorResponse.setStatus(HttpStatus.CONFLICT.value());//CONFLICT itself can be an enum;
 		errorResponse.setError(HttpStatus.CONFLICT.getReasonPhrase());
 		errorResponse.setMessage(ex.getMessage());
 		errorResponse.setPath(request.getRequestURI());
@@ -73,6 +73,42 @@ public class GlobalExceptionHandler
 		
 		return ResponseEntity
 				.status(HttpStatus.CONFLICT)
+				.body(errorResponse);
+	}
+	
+	@ExceptionHandler(DuplicateCourseNameException.class)
+	public ResponseEntity<ErrorResponse> handleDuplicateCourseNameException(DuplicateCourseNameException ex, HttpServletRequest request)
+	{
+		ErrorResponse errorResponse = new ErrorResponse();
+		
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.CONFLICT.value());//CONFLICT itself can be an enum;
+		errorResponse.setError(HttpStatus.CONFLICT.getReasonPhrase());
+		errorResponse.setMessage(ex.getMessage());
+		errorResponse.setPath(request.getRequestURI());
+		
+		
+		
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(errorResponse);
+	}
+	
+	@ExceptionHandler(CourseNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleCourseNotFoundException(CourseNotFoundException ex, HttpServletRequest request)
+	{
+		ErrorResponse errorResponse = new ErrorResponse();
+		
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());//NOT_FOUND itself can be an enum;
+		errorResponse.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
+		errorResponse.setMessage(ex.getMessage());
+		errorResponse.setPath(request.getRequestURI());
+		
+		
+		
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
 				.body(errorResponse);
 	}
 }
