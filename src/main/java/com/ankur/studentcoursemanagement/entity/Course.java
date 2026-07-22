@@ -1,10 +1,14 @@
 package com.ankur.studentcoursemanagement.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,6 +28,9 @@ public class Course
 	
 	@Column(name = "fees", nullable = false)
 	private Double fees;
+	
+	@OneToMany(mappedBy = "course")
+	private List<Enrollment> enrollments = new ArrayList<>();
 	
 	public Course() {}
 
@@ -57,5 +64,13 @@ public class Course
 
 	public void setFees(Double fees) {
 		this.fees = fees;
+	}
+
+	public List<Enrollment> getEnrollments() {
+		return enrollments;
+	}
+
+	public void setEnrollments(List<Enrollment> enrollments) {
+		this.enrollments = enrollments;
 	}
 }
